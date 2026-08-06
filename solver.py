@@ -63,20 +63,4 @@ def plot_function(expression, var='x'):
     except Exception as e:
         return None
 
-# ===== РАСПОЗНАВАНИЕ ГОЛОСА ЧЕРЕЗ OPENROUTER =====
-def transcribe_voice(file_path):
-    try:
-        url = "https://openrouter.ai/api/v1/chat/completions"
-        headers = {
-            "Authorization": f"Bearer {OPENROUTER_API_KEY}",
-        }
-        with open(file_path, "rb") as f:
-            files = {"file": f}
-            response = requests.post(url, headers=headers, files=files)
-            result = response.json()
-            if "choices" in result and len(result["choices"]) > 0:
-                return result["choices"][0]["message"]["content"].strip()
-            else:
-                return None
-    except Exception as e:
-        return None
+
