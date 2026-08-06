@@ -65,9 +65,18 @@ import os
 # Загружаем лёгкую модель Whisper (tiny)
 whisper_model = whisper.load_model("tiny")
 
+import whisper
+import os
+
+whisper_model = whisper.load_model("tiny")
+
 def transcribe_voice(file_path):
     try:
-        # Whisper умеет читать .ogg напрямую (FFmpeg уже установлен)
+        # Проверяем, что файл существует
+        if not os.path.exists(file_path):
+            return None
+        
+        # Распознаём
         result = whisper_model.transcribe(file_path, language='ru')
         text = result['text'].strip()
         
@@ -75,6 +84,7 @@ def transcribe_voice(file_path):
         if os.path.exists(file_path):
             os.remove(file_path)
         
-        return text
+        return text if text else None
     except Exception as e:
+        print(f"❌ Ошибка распознавания: {e}")
         return None
