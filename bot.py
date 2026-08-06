@@ -9,7 +9,7 @@ from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.constants import ParseMode
 from telegram.ext import Application, CommandHandler, CallbackQueryHandler, MessageHandler, filters, ContextTypes
 from config import BOT_TOKEN, OPENROUTER_API_KEY
-from solver import solve_math, plot_function, transcribe_voice
+from solver import solve_math, plot_function
 from database import init_db, get_user, create_user, save_history, get_history, clear_history, activate_subscription
 
 ADMIN_ID = 8875058913  # ВСТАВЬ СВОЙ ID!
