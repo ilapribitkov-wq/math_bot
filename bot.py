@@ -217,7 +217,7 @@ async def handle_voice(update: Update, context: ContextTypes.DEFAULT_TYPE):
     voice_file = await update.message.voice.get_file()
     file_path = f"voice_{user_id}.ogg"
     await voice_file.download_to_drive(file_path)
-
+    print(f"📁 Файл скачан: {file_path}, размер: {os.path.getsize(file_path)} байт")
     await update.message.reply_text("🎤 Распознаю голос...")
     text = transcribe_voice(file_path)
 
