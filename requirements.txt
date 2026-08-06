@@ -1,0 +1,7 @@
+python-telegram-bot
+requests
+python-dotenv
+aiosqlite
+matplotlib
+numpy
+openai-whisper
