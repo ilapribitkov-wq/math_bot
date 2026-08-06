@@ -65,7 +65,7 @@ def plot_function(expression, var='x'):
         return None
 
 # ===== РАСПОЗНАВАНИЕ ГОЛОСА =====
-whisper_model = whisper.load_model("base")
+whisper_model = whisper.load_model("tiny")
 
 def transcribe_voice(file_path):
     try:
