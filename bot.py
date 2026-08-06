@@ -7,12 +7,12 @@ import base64
 import requests
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.constants import ParseMode
-from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes, CallbackQueryHandler
+from telegram.ext import Application, CommandHandler, CallbackQueryHandler, MessageHandler, filters, ContextTypes
 from config import BOT_TOKEN, OPENROUTER_API_KEY
 from solver import solve_math, plot_function, transcribe_voice
 from database import init_db, get_user, create_user, save_history, get_history, clear_history, activate_subscription
 
-ADMIN_ID = 7827158843  # ВСТАВЬ СВОЙ ID!
+ADMIN_ID = 8875058913  # ВСТАВЬ СВОЙ ID!
 
 logging.basicConfig(level=logging.INFO)
 
@@ -36,7 +36,6 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         if not user:
             await create_user(user_id)
             user = await get_user(user_id)
-        free_attempts = user[0] if user else 999
         trial_start = user[2] if user else None
         days_left = 2
         if trial_start:
@@ -119,14 +118,12 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         subscription_end = user[1]
         trial_start = user[2]
         
-        # Если есть подписка
         if subscription_end and datetime.datetime.now().date() < datetime.datetime.strptime(subscription_end, "%Y-%m-%d").date():
             solution = solve_math(update.message.text)
             await save_history(user_id, update.message.text, solution)
             await update.message.reply_text(f"📝 Решение:\n\n{solution}")
             return
         
-        # Если триал ещё не закончился (2 дня)
         if trial_start:
             trial_date = datetime.datetime.strptime(trial_start, "%Y-%m-%d").date()
             days_used = (datetime.datetime.now().date() - trial_date).days
@@ -275,6 +272,7 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await query.edit_message_text("🗑️ Напиши /clear_history")
 
 def main():
+    import asyncio
     asyncio.run(init_db())
     app = Application.builder().token(BOT_TOKEN).build()
     app.add_handler(CommandHandler("start", start))
