@@ -3,7 +3,6 @@ import json
 import matplotlib.pyplot as plt
 import numpy as np
 import io
-import whisper
 import os
 import subprocess
 from config import OPENROUTER_API_KEY
@@ -64,20 +63,20 @@ def plot_function(expression, var='x'):
     except Exception as e:
         return None
 
-# ===== РАСПОЗНАВАНИЕ ГОЛОСА =====
-whisper_model = whisper.load_model("tiny")
-
+# ===== РАСПОЗНАВАНИЕ ГОЛОСА ЧЕРЕЗ OPENROUTER =====
 def transcribe_voice(file_path):
     try:
-        wav_path = file_path.replace(".ogg", ".wav")
-        ffmpeg_cmd = f'ffmpeg -i "{file_path}" -ar 16000 -ac 1 "{wav_path}" -y'
-        subprocess.run(ffmpeg_cmd, shell=True, capture_output=True, check=False)
-        result = whisper_model.transcribe(wav_path, language='ru')
-        text = result['text'].strip()
-        if os.path.exists(wav_path):
-            os.remove(wav_path)
-        if os.path.exists(file_path):
-            os.remove(file_path)
-        return text
+        url = "https://openrouter.ai/api/v1/chat/completions"
+        headers = {
+            "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+        }
+        with open(file_path, "rb") as f:
+            files = {"file": f}
+            response = requests.post(url, headers=headers, files=files)
+            result = response.json()
+            if "choices" in result and len(result["choices"]) > 0:
+                return result["choices"][0]["message"]["content"].strip()
+            else:
+                return None
     except Exception as e:
         return None
