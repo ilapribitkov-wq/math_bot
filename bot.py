@@ -211,45 +211,6 @@ async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
     except Exception as e:
         await update.message.reply_text(f"❌ Ошибка при распознавании: {str(e)}")
 
-async def handle_voice(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user_id = update.effective_user.id
-    voice_file = await update.message.voice.get_file()
-    file_path = f"voice_{user_id}_{datetime.datetime.now().timestamp()}.ogg"
-    await voice_file.download_to_drive(file_path)
-    await update.message.reply_text("🎤 Распознаю голос... (это может занять до 10 секунд)")
-    text = transcribe_voice(file_path)
-    if not text:
-        await update.message.reply_text("❌ Не удалось распознать голос.")
-        return
-    await update.message.reply_text(f"📝 Распознанный текст:\n{text}")
-    if user_id == ADMIN_ID:
-        solution = solve_math(text)
-        await save_history(user_id, text, solution)
-        await update.message.reply_text(f"📝 Решение:\n\n{solution}")
-        return
-    user = await get_user(user_id)
-    if not user:
-        await create_user(user_id)
-        user = await get_user(user_id)
-    subscription_end = user[1]
-    trial_start = user[2]
-    if subscription_end and datetime.datetime.now().date() < datetime.datetime.strptime(subscription_end, "%Y-%m-%d").date():
-        solution = solve_math(text)
-        await save_history(user_id, text, solution)
-        await update.message.reply_text(f"📝 Решение:\n\n{solution}")
-        return
-    if trial_start:
-        trial_date = datetime.datetime.strptime(trial_start, "%Y-%m-%d").date()
-        days_used = (datetime.datetime.now().date() - trial_date).days
-        if days_used < 2:
-            solution = solve_math(text)
-            await save_history(user_id, text, solution)
-            days_left = 2 - days_used
-            await update.message.reply_text(
-                f"📝 Решение:\n\n{solution}\n\n⏳ Осталось дней бесплатного периода: {days_left}"
-            )
-            return
-    await update.message.reply_text("❌ Твой бесплатный период закончился. Оплати подписку.")
 
 async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
@@ -281,7 +242,6 @@ def main():
     app.add_handler(CommandHandler("clear_history", clear_history_cmd))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
     app.add_handler(MessageHandler(filters.PHOTO, handle_photo))
-    app.add_handler(MessageHandler(filters.VOICE, handle_voice))
     app.add_handler(CallbackQueryHandler(button_callback))
     print("👁️ Бот запущен!")
     app.run_polling()
