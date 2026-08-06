@@ -11,6 +11,16 @@ from telegram.ext import Application, CommandHandler, MessageHandler, filters, C
 from config import BOT_TOKEN, OPENROUTER_API_KEY
 from solver import solve_math, plot_function, transcribe_voice
 from database import init_db, get_user, create_user, save_history, get_history, clear_history, activate_subscription
+import subprocess
+import os
+
+# Устанавливаем FFmpeg, если его нет
+try:
+    subprocess.run(["ffmpeg", "-version"], capture_output=True, check=True)
+except:
+    print("⚠️ FFmpeg не найден, устанавливаю...")
+    os.system("apt-get update && apt-get install -y ffmpeg")
+    print("✅ FFmpeg установлен")
 
 # ===== ВСТАВЬ СВОЙ ID (число) =====
 ADMIN_ID = 7827158843  # ЗАМЕНИ НА СВОЙ!
