@@ -290,6 +290,7 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await query.edit_message_text("🗑️ /clear_history")
 
 def main():
+    print("🚀 Бот запускается с новым кодом!")
     asyncio.run(init_db())
     app = Application.builder().token(BOT_TOKEN).build()
     app.add_handler(CommandHandler("start", start))
