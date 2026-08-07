@@ -82,6 +82,8 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         user_id = update.effective_user.id
         text = update.message.text.lower().strip()
+        
+        print(f"📩 Получено сообщение: {text}")
 
         # ===== ГРАФИК =====
         if text.startswith("график") or text.startswith("graph"):
