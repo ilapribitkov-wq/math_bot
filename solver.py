@@ -3,10 +3,8 @@ import json
 import matplotlib.pyplot as plt
 import numpy as np
 import io
-import os
 from config import OPENROUTER_API_KEY
 
-# ===== РЕШЕНИЕ ЗАДАЧ ЧЕРЕЗ GPT =====
 def solve_math(text):
     url = "https://openrouter.ai/api/v1/chat/completions"
     headers = {
@@ -16,11 +14,7 @@ def solve_math(text):
     data = {
         "model": "openai/gpt-4o-mini",
         "messages": [
-            {"role": "system", "content": 
-             "Ты — супер-репетитор по математике, физике и химии. "
-             "Решай задачи пошагово и понятно. "
-             "НЕ используй LaTeX. Пиши формулы текстом: x^2, H2O, F=ma."
-            },
+            {"role": "system", "content": "Ты — репетитор по математике, физике и химии. Решай пошагово. НЕ используй LaTeX."},
             {"role": "user", "content": text}
         ],
         "temperature": 0.1
@@ -30,17 +24,14 @@ def solve_math(text):
         result = response.json()
         if "error" in result:
             return f"❌ Ошибка OpenRouter: {result['error']['message']}"
-        if "choices" in result and len(result["choices"]) > 0:
+        if "choices" in result:
             return result["choices"][0]["message"]["content"]
-        else:
-            return f"❌ Неожиданный ответ: {json.dumps(result, indent=2, ensure_ascii=False)}"
+        return "❌ Неожиданный ответ"
     except Exception as e:
-        return f"❌ Ошибка при обращении к OpenRouter: {str(e)}"
+        return f"❌ Ошибка: {str(e)}"
 
-# ===== ГРАФИКИ =====
-def plot_function(expression, var='x'):
+def plot_function(expression):
     try:
-        print(f"📊 Строю график: {expression}")
         x = np.linspace(-10, 10, 500)
         expr = expression.replace('^', '**')
         y = eval(expr)
@@ -58,19 +49,12 @@ def plot_function(expression, var='x'):
         plt.close()
         return buf
     except Exception as e:
-        print(f"❌ Ошибка графика: {e}")
         return None
-
-import requests
-import os
-from config import OPENROUTER_API_KEY
 
 def transcribe_voice(file_path):
     try:
         url = "https://openrouter.ai/api/v1/audio/transcriptions"
-        headers = {
-            "Authorization": f"Bearer {OPENROUTER_API_KEY}",
-        }
+        headers = {"Authorization": f"Bearer {OPENROUTER_API_KEY}"}
         with open(file_path, "rb") as f:
             files = {"file": f}
             data = {"model": "whisper-1", "language": "ru"}
@@ -78,7 +62,6 @@ def transcribe_voice(file_path):
             result = response.json()
             if "text" in result:
                 return result["text"].strip()
-            else:
-                return None
+            return None
     except Exception as e:
         return None
