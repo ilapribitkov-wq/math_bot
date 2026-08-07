@@ -99,16 +99,16 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         # ГРАФИК
         if text.startswith("график") or text.startswith("graph"):
-            expr = update.message.text.replace("график", "").replace("graph", "").strip()
-            if not expr:
-                await update.message.reply_text("📊 Напиши функцию, например: график x**2")
-                return
-            img = plot_function(expr)
-            if img:
-                await update.message.reply_photo(photo=img, caption=f"📈 График: {expr}")
-            else:
-                await update.message.reply_text("❌ Ошибка построения графика")
-            return
+    expr = update.message.text.replace("график", "").replace("graph", "").strip()
+    if not expr:
+        await update.message.reply_text("📊 Напиши функцию, например: график x**2")
+        return
+    img = plot_function(expr)
+    if img:
+        await update.message.reply_photo(photo=img, caption=f"📈 График функции: {expr}")
+    else:
+        await update.message.reply_text("❌ Не удалось построить график. Проверь формулу.")
+    return
 
         # АДМИН — БЕЗЛИМИТ
         if user_id == ADMIN_ID:
