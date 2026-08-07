@@ -32,6 +32,7 @@ def solve_math(text):
 
 def plot_function(expression):
     try:
+        print(f"📊 Строю график: {expression}")
         x = np.linspace(-10, 10, 500)
         expr = expression.replace('^', '**')
         y = eval(expr)
