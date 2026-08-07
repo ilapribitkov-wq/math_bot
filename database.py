@@ -1,5 +1,6 @@
 import aiosqlite
 import datetime
+import time
 
 DB_PATH = "users.db"
 
@@ -20,6 +21,14 @@ async def init_db():
                 query TEXT,
                 answer TEXT,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+        await db.execute("""
+            CREATE TABLE IF NOT EXISTS limits (
+                user_id INTEGER PRIMARY KEY,
+                last_message_time REAL,
+                daily_count INTEGER DEFAULT 0,
+                last_reset_date TEXT
             )
         """)
         await db.commit()
@@ -70,3 +79,45 @@ async def activate_subscription(user_id, days=30):
             (end_date, user_id)
         )
         await db.commit()
+
+async def check_flood(user_id, cooldown=3):
+    async with aiosqlite.connect(DB_PATH) as db:
+        cursor = await db.execute("SELECT last_message_time FROM limits WHERE user_id = ?", (user_id,))
+        row = await cursor.fetchone()
+        now = time.time()
+        if row:
+            last_time = row[0]
+            if now - last_time < cooldown:
+                return False
+        await db.execute(
+            "INSERT INTO limits (user_id, last_message_time) VALUES (?, ?) ON CONFLICT(user_id) DO UPDATE SET last_message_time = ?",
+            (user_id, now, now)
+        )
+        await db.commit()
+        return True
+
+async def check_daily_limit(user_id, limit=200):
+    today = datetime.datetime.now().strftime("%Y-%m-%d")
+    async with aiosqlite.connect(DB_PATH) as db:
+        cursor = await db.execute(
+            "SELECT daily_count, last_reset_date FROM limits WHERE user_id = ?", (user_id,)
+        )
+        row = await cursor.fetchone()
+        if row:
+            count, reset_date = row
+            if reset_date != today:
+                count = 0
+                reset_date = today
+            if count >= limit:
+                return False
+            await db.execute(
+                "UPDATE limits SET daily_count = ? WHERE user_id = ?",
+                (count + 1, user_id)
+            )
+        else:
+            await db.execute(
+                "INSERT INTO limits (user_id, daily_count, last_reset_date) VALUES (?, ?, ?)",
+                (user_id, 1, today)
+            )
+        await db.commit()
+        return True
