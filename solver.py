@@ -36,11 +36,11 @@ def plot_function(expression):
         print(f"📊 Строю график: {expression}")
         x = np.linspace(-10, 10, 500)
         expr = expression.replace('^', '**')
-        # Разрешаем использование математических функций
+        # Разрешаем использовать математические функции
         allowed_names = {
-            'sin': sin, 'cos': cos, 'tan': tan,
-            'log': log, 'sqrt': sqrt, 'exp': exp,
-            'pi': pi, 'e': e
+            'sin': np.sin, 'cos': np.cos, 'tan': np.tan,
+            'log': np.log, 'sqrt': np.sqrt, 'exp': np.exp,
+            'pi': np.pi, 'e': np.e
         }
         y = eval(expr, {"__builtins__": {}}, allowed_names)
         plt.figure(figsize=(8, 6))
