@@ -91,11 +91,11 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 return
             img = plot_function(expr)
             if img:
-                await update.message.reply_photo(photo=img, caption=f"📈 График: {expr}")
+                await update.message.reply_photo(photo=img, caption=f"📈 График функции: {expr}")
             else:
-                await update.message.reply_text("❌ Не удалось построить график.")
+                await update.message.reply_text("❌ Не удалось построить график. Проверь формулу.")
             return
-
+            
         # ===== АНТИФЛУД + ДНЕВНОЙ ЛИМИТ =====
         if user_id != ADMIN_ID:
             if not await check_flood(user_id, cooldown=3):
