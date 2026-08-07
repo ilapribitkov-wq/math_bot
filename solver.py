@@ -40,6 +40,7 @@ def solve_math(text):
 # ===== ГРАФИКИ =====
 def plot_function(expression, var='x'):
     try:
+        print(f"📊 Строю график: {expression}")
         x = np.linspace(-10, 10, 500)
         expr = expression.replace('^', '**')
         y = eval(expr)
@@ -57,6 +58,7 @@ def plot_function(expression, var='x'):
         plt.close()
         return buf
     except Exception as e:
+        print(f"❌ Ошибка графика: {e}")
         return None
 
 import requests
