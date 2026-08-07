@@ -3,9 +3,10 @@ import json
 import matplotlib.pyplot as plt
 import numpy as np
 import io
-from math import sin, cos, tan, log, sqrt, exp, pi, e
+import os
 from config import OPENROUTER_API_KEY
 
+# ===== РЕШЕНИЕ ЗАДАЧ ЧЕРЕЗ GPT =====
 def solve_math(text):
     url = "https://openrouter.ai/api/v1/chat/completions"
     headers = {
@@ -15,7 +16,11 @@ def solve_math(text):
     data = {
         "model": "openai/gpt-4o-mini",
         "messages": [
-            {"role": "system", "content": "Ты — репетитор по математике, физике и химии. Решай пошагово. НЕ используй LaTeX."},
+            {"role": "system", "content": 
+             "Ты — супер-репетитор по математике, физике и химии. "
+             "Решай задачи пошагово и понятно. "
+             "НЕ используй LaTeX. Пиши формулы текстом: x^2, H2O, F=ma."
+            },
             {"role": "user", "content": text}
         ],
         "temperature": 0.1
@@ -25,24 +30,19 @@ def solve_math(text):
         result = response.json()
         if "error" in result:
             return f"❌ Ошибка OpenRouter: {result['error']['message']}"
-        if "choices" in result:
+        if "choices" in result and len(result["choices"]) > 0:
             return result["choices"][0]["message"]["content"]
-        return "❌ Неожиданный ответ"
+        else:
+            return f"❌ Неожиданный ответ: {json.dumps(result, indent=2, ensure_ascii=False)}"
     except Exception as e:
-        return f"❌ Ошибка: {str(e)}"
+        return f"❌ Ошибка при обращении к OpenRouter: {str(e)}"
 
-def plot_function(expression):
+# ===== ГРАФИКИ =====
+def plot_function(expression, var='x'):
     try:
-        print(f"📊 Строю график: {expression}")
         x = np.linspace(-10, 10, 500)
         expr = expression.replace('^', '**')
-        # Разрешаем использовать математические функции
-        allowed_names = {
-            'sin': np.sin, 'cos': np.cos, 'tan': np.tan,
-            'log': np.log, 'sqrt': np.sqrt, 'exp': np.exp,
-            'pi': np.pi, 'e': np.e
-        }
-        y = eval(expr, {"__builtins__": {}}, allowed_names)
+        y = eval(expr)
         plt.figure(figsize=(8, 6))
         plt.plot(x, y, linewidth=2, color='blue')
         plt.grid(True, linestyle='--', alpha=0.7)
@@ -57,20 +57,24 @@ def plot_function(expression):
         plt.close()
         return buf
     except Exception as e:
-        print(f"❌ Ошибка графика: {e}")
         return None
+
+import whisper
+import os
+
+# Загружаем лёгкую модель Whisper (tiny)
+whisper_model = whisper.load_model("tiny")
 
 def transcribe_voice(file_path):
     try:
-        url = "https://openrouter.ai/api/v1/audio/transcriptions"
-        headers = {"Authorization": f"Bearer {OPENROUTER_API_KEY}"}
-        with open(file_path, "rb") as f:
-            files = {"file": f}
-            data = {"model": "whisper-1", "language": "ru"}
-            response = requests.post(url, headers=headers, files=files, data=data)
-            result = response.json()
-            if "text" in result:
-                return result["text"].strip()
-            return None
+        # Whisper умеет читать .ogg напрямую (FFmpeg уже установлен)
+        result = whisper_model.transcribe(file_path, language='ru')
+        text = result['text'].strip()
+        
+        # Удаляем временный файл
+        if os.path.exists(file_path):
+            os.remove(file_path)
+        
+        return text
     except Exception as e:
         return None
