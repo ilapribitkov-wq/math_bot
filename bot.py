@@ -88,6 +88,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         # ===== ГРАФИК =====
         if text.startswith("график") or text.startswith("graph"):
             expr = update.message.text.replace("график", "").replace("graph", "").strip()
+            print(f"📊 Выражение для графика: {expr}")
             if not expr:
                 await update.message.reply_text("📊 Напиши функцию, например: график x**2")
                 return
