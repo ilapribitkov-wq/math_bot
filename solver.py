@@ -59,31 +59,24 @@ def plot_function(expression, var='x'):
     except Exception as e:
         return None
 
-import whisper
+import requests
 import os
-import time
-
-whisper_model = whisper.load_model("tiny")
+from config import OPENROUTER_API_KEY
 
 def transcribe_voice(file_path):
     try:
-        start_time = time.time()
-        
-        # Проверяем, что файл существует
-        if not os.path.exists(file_path):
-            print(f"❌ Файл {file_path} не найден")
-            return None
-        
-        print(f"🎤 Начинаем распознавание: {file_path}")
-        result = whisper_model.transcribe(file_path, language='ru', fp16=False)
-        text = result['text'].strip()
-        
-        elapsed = time.time() - start_time
-        print(f"✅ Распознано за {elapsed:.2f} сек: {text}")
-        
-        return text
-    except Exception as e:
-        print(f"❌ Ошибка распознавания: {e}")
-        return None
+        url = "https://openrouter.ai/api/v1/audio/transcriptions"
+        headers = {
+            "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+        }
+        with open(file_path, "rb") as f:
+            files = {"file": f}
+            data = {"model": "whisper-1", "language": "ru"}
+            response = requests.post(url, headers=headers, files=files, data=data)
+            result = response.json()
+            if "text" in result:
+                return result["text"].strip()
+            else:
+                return None
     except Exception as e:
         return None
