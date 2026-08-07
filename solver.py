@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import io
 from math import sin, cos, tan, log, sqrt, exp, pi, e
-from config import OPENROUTER_API_KE
+from config import OPENROUTER_API_KEY
 
 def solve_math(text):
     url = "https://openrouter.ai/api/v1/chat/completions"
