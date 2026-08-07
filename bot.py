@@ -92,62 +92,11 @@ async def clear_history_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
     except Exception as e:
         print(f"❌ Ошибка в clear_history: {e}")
 
-async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    try:
-        user_id = update.effective_user.id
-        text = update.message.text.lower().strip()
-
-        # ГРАФИК
-if text.startswith("график") or text.startswith("graph"):
-    expr = update.message.text.replace("график", "").replace("graph", "").strip()
-    if not expr:
-        await update.message.reply_text("📊 Напиши функцию, например: график x**2")
-        return
-    img = plot_function(expr)
-    if img:
-        await update.message.reply_photo(photo=img, caption=f"📈 График функции: {expr}")
-    else:
-        await update.message.reply_text("❌ Не удалось построить график. Проверь формулу.")
-    return
-
-        # АДМИН — БЕЗЛИМИТ
-        if user_id == ADMIN_ID:
-            solution = solve_math(update.message.text)
-            await save_history(user_id, update.message.text, solution)
-            await update.message.reply_text(f"📝 Решение:\n\n{solution}")
-            return
-
-        # ОБЫЧНЫЕ ПОЛЬЗОВАТЕЛИ (2 дня бесплатно)
-        user = await get_user(user_id)
-        if not user:
-            await create_user(user_id)
-            user = await get_user(user_id)
-
-        subscription_end = user[1]
-        trial_start = user[2]
-
-        if subscription_end and datetime.datetime.now().date() < datetime.datetime.strptime(subscription_end, "%Y-%m-%d").date():
-            solution = solve_math(update.message.text)
-            await save_history(user_id, update.message.text, solution)
-            await update.message.reply_text(f"📝 Решение:\n\n{solution}")
-            return
-
-        if trial_start:
-            trial_date = datetime.datetime.strptime(trial_start, "%Y-%m-%d").date()
-            days_used = (datetime.datetime.now().date() - trial_date).days
-            if days_used < 2:
-                solution = solve_math(update.message.text)
-                await save_history(user_id, update.message.text, solution)
-                days_left = 2 - days_used
-                await update.message.reply_text(
-                    f"📝 Решение:\n\n{solution}\n\n⏳ Осталось дней: {days_left}"
-                )
-                return
-
-        await update.message.reply_text("❌ Бесплатный период закончился. Оплати подписку /pay")
-    except Exception as e:
-        print(f"❌ Ошибка в handle_message: {e}")
-
+try:
+    # какой-то код
+except Exception as e:
+    # обработка ошибки
+    
 async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     photo_file = await update.message.photo[-1].get_file()
