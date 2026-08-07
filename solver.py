@@ -72,19 +72,8 @@ whisper_model = whisper.load_model("tiny")
 
 def transcribe_voice(file_path):
     try:
-        # Проверяем, что файл существует
-        if not os.path.exists(file_path):
-            return None
-        
-        # Распознаём
         result = whisper_model.transcribe(file_path, language='ru')
         text = result['text'].strip()
-        
-        # Удаляем временный файл
-        if os.path.exists(file_path):
-            os.remove(file_path)
-        
-        return text if text else None
+        return text
     except Exception as e:
-        print(f"❌ Ошибка распознавания: {e}")
         return None
