@@ -61,19 +61,29 @@ def plot_function(expression, var='x'):
 
 import whisper
 import os
-
-# Загружаем лёгкую модель Whisper (tiny)
-whisper_model = whisper.load_model("tiny")
-
-import whisper
-import os
+import time
 
 whisper_model = whisper.load_model("tiny")
 
 def transcribe_voice(file_path):
     try:
-        result = whisper_model.transcribe(file_path, language='ru')
+        start_time = time.time()
+        
+        # Проверяем, что файл существует
+        if not os.path.exists(file_path):
+            print(f"❌ Файл {file_path} не найден")
+            return None
+        
+        print(f"🎤 Начинаем распознавание: {file_path}")
+        result = whisper_model.transcribe(file_path, language='ru', fp16=False)
         text = result['text'].strip()
+        
+        elapsed = time.time() - start_time
+        print(f"✅ Распознано за {elapsed:.2f} сек: {text}")
+        
         return text
+    except Exception as e:
+        print(f"❌ Ошибка распознавания: {e}")
+        return None
     except Exception as e:
         return None
