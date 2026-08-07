@@ -3,8 +3,8 @@ import json
 import matplotlib.pyplot as plt
 import numpy as np
 import io
-from config import OPENROUTER_API_KEY
 from math import sin, cos, tan, log, sqrt, exp, pi, e
+from config import OPENROUTER_API_KE
 
 def solve_math(text):
     url = "https://openrouter.ai/api/v1/chat/completions"
@@ -36,7 +36,13 @@ def plot_function(expression):
         print(f"📊 Строю график: {expression}")
         x = np.linspace(-10, 10, 500)
         expr = expression.replace('^', '**')
-        y = eval(expr)
+        # Разрешаем использование математических функций
+        allowed_names = {
+            'sin': sin, 'cos': cos, 'tan': tan,
+            'log': log, 'sqrt': sqrt, 'exp': exp,
+            'pi': pi, 'e': e
+        }
+        y = eval(expr, {"__builtins__": {}}, allowed_names)
         plt.figure(figsize=(8, 6))
         plt.plot(x, y, linewidth=2, color='blue')
         plt.grid(True, linestyle='--', alpha=0.7)
@@ -51,6 +57,7 @@ def plot_function(expression):
         plt.close()
         return buf
     except Exception as e:
+        print(f"❌ Ошибка графика: {e}")
         return None
 
 def transcribe_voice(file_path):
