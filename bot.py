@@ -247,7 +247,7 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await query.edit_message_text("📚 /history")
     elif query.data == "clear_history":
         await query.edit_message_text("🗑️ /clear_history")
-   elif query.data == "physics":
+    elif query.data == "physics":
         await query.edit_message_text(
         "⚛️ Физика:\n\n"
         "Напиши задачу по физике, например:\n"
