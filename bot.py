@@ -247,8 +247,8 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await query.edit_message_text("📚 /history")
     elif query.data == "clear_history":
         await query.edit_message_text("🗑️ /clear_history")
-        elif query.data == "physics":
-    await query.edit_message_text(
+   elif query.data == "physics":
+        await query.edit_message_text(
         "⚛️ Физика:\n\n"
         "Напиши задачу по физике, например:\n"
         "• 'С какой силой притягиваются два тела массами 10 и 20 кг на расстоянии 2 м?'\n"
@@ -256,8 +256,8 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "• 'Чему равна кинетическая энергия тела массой 2 кг при скорости 3 м/с?'"
     )
 
-elif query.data == "chemistry":
-    await query.edit_message_text(
+   elif query.data == "chemistry":
+        await query.edit_message_text(
         "🧪 Химия:\n\n"
         "Напиши задачу по химии, например:\n"
         "• 'Уравняй реакцию: H2 + O2 = H2O'\n"
