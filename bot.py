@@ -16,7 +16,7 @@ from database import (
     clean_old_records
 )
 
-ADMIN_ID = 8875058913  # ЗАМЕНИ НА СВОЙ
+ADMIN_ID = 7827158843  # ЗАМЕНИ НА СВОЙ
 
 logging.basicConfig(level=logging.INFO)
 
