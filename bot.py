@@ -277,5 +277,20 @@ def main_keyboard():
         [InlineKeyboardButton("🗑️ Очистить историю", callback_data="clear_history")],
     ]
     return InlineKeyboardMarkup(keyboard)
+def main():
+    print("🚀 Бот запускается с защитой!")
+    asyncio.run(init_db())
+    asyncio.run(clean_old_records())
+    app = Application.builder().token(BOT_TOKEN).build()
+    app.add_handler(CommandHandler("start", start))
+    app.add_handler(CommandHandler("pay", pay))
+    app.add_handler(CommandHandler("history", history))
+    app.add_handler(CommandHandler("clear_history", clear_history_cmd))
+    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
+    app.add_handler(MessageHandler(filters.PHOTO, handle_photo))
+    app.add_handler(CallbackQueryHandler(button_callback))
+    print("👁️ Бот запущен! Защита активна.")
+    app.run_polling()
+
 if __name__ == "__main__":
     main()
