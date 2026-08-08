@@ -212,7 +212,7 @@ async def is_ip_blocked(ip):
 # ===== ЗАЩИТА 6: УВЕДОМЛЕНИЯ АДМИНУ =====
 async def notify_admin(bot, message):
     try:
-        await bot.send_message(8875058913, f"⚠️ {message}")  # ЗАМЕНИ НА СВОЙ ID
+        await bot.send_message(7827158843, f"⚠️ {message}")  # ЗАМЕНИ НА СВОЙ ID
     except:
         pass
 
