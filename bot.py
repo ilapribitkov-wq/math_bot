@@ -256,7 +256,7 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "• 'Чему равна кинетическая энергия тела массой 2 кг при скорости 3 м/с?'"
     )
 
-   elif query.data == "chemistry":
+    elif query.data == "chemistry":
         await query.edit_message_text(
         "🧪 Химия:\n\n"
         "Напиши задачу по химии, например:\n"
