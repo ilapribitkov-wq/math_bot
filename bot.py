@@ -25,6 +25,8 @@ def main_keyboard():
         [InlineKeyboardButton("📝 Решить задачу", callback_data="solve")],
         [InlineKeyboardButton("💳 Оплатить подписку", callback_data="pay")],
         [InlineKeyboardButton("❓ Помощь", callback_data="help")],
+        [InlineKeyboardButton("⚛️ Физика", callback_data="physics")],
+        [InlineKeyboardButton("🧪 Химия", callback_data="chemistry")],
         [InlineKeyboardButton("📊 График", callback_data="graph")],
         [InlineKeyboardButton("📚 История", callback_data="history")],
         [InlineKeyboardButton("🗑️ Очистить историю", callback_data="clear_history")],
@@ -92,7 +94,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         user_id = update.effective_user.id
         text = update.message.text.lower().strip()
 
-        # ===== ЗАЩИТА: IP БЛОКИРОВКА =====
+        # ===== IP БЛОКИРОВКА =====
         ip = await get_ip_from_update(update)
         if ip and await is_ip_blocked(ip):
             await update.message.reply_text("❌ Твой IP заблокирован за нарушение правил.")
@@ -104,7 +106,6 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
             if not expr:
                 await update.message.reply_text("📊 Напиши функцию, например: график x**2")
                 return
-            # Проверка лимита на сложные запросы
             if user_id != ADMIN_ID and not await check_complex_limit(user_id):
                 await update.message.reply_text("❌ Ты исчерпал дневной лимит на сложные запросы (10).")
                 return
@@ -115,7 +116,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 await update.message.reply_text("❌ Не удалось построить график. Проверь формулу.")
             return
 
-        # ===== ЗАЩИТА: АНТИФЛУД И ДНЕВНОЙ ЛИМИТ =====
+        # ===== АНТИФЛУД И ДНЕВНОЙ ЛИМИТ =====
         if user_id != ADMIN_ID:
             if not await check_flood(user_id, cooldown=3):
                 await update.message.reply_text("⏳ Подожди 3 секунды.")
@@ -239,71 +240,46 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await query.edit_message_text("✏️ Напиши задачу текстом или отправь фото.")
     elif query.data == "pay":
         await query.edit_message_text("💳 Переведи 200 ₽ на карту: 1234 5678 9012 3456")
-   elif query.data == "help":
-    await query.edit_message_text(
-        "🤖 <b>Что умеет этот бот?</b>\n\n"
-        "📝 <b>Математика</b>\n"
-        "• Уравнения, системы, неравенства\n"
-        "• Производные, интегралы, пределы\n"
-        "• Графики функций: x², sin(x), cos(x), log(x)\n\n"
-        "⚛️ <b>Физика</b>\n"
-        "• Кинематика, динамика, законы Ньютона\n"
-        "• Импульс, энергия, мощность\n"
-        "• Гравитация, давление, оптика\n\n"
-        "🧪 <b>Химия</b>\n"
-        "• Молярная масса, количество вещества\n"
-        "• Объём газов, массовая доля\n"
-        "• Балансировка реакций, pH растворов\n\n"
-        "📸 <b>Распознавание фото</b>\n"
-        "• Отправь фото с задачей — я прочитаю и решу\n\n"
-        "📚 <b>История решений</b>\n"
-        "• Команда /history — показывает последние 10 решений\n\n"
-        "💰 <b>Подписка</b>\n"
-        "• 2 дня бесплатно, затем — 5 BYN (200 ₽) в месяц\n"
-        "• Безлимит на 100 запросов в день\n\n"
-        "📌 <b>Как начать?</b>\n"
-        "• Напиши задачу текстом\n"
-        "• Отправь фото с задачей\n"
-        "• Или нажми «график x²» для построения\n\n"
-        "🔥 Бот создан для школьников, студентов и всех, кто хочет быстро решать задачи!",
-        parse_mode=ParseMode.HTML
-    )
+    elif query.data == "help":
+        await query.edit_message_text(
+            "🤖 <b>Что умеет этот бот?</b>\n\n"
+            "📝 <b>Математика</b>\n"
+            "• Уравнения, системы, неравенства\n"
+            "• Производные, интегралы, пределы\n"
+            "• Графики функций: x², sin(x), cos(x), log(x)\n\n"
+            "⚛️ <b>Физика</b>\n"
+            "• Кинематика, динамика, законы Ньютона\n"
+            "• Импульс, энергия, мощность\n"
+            "• Гравитация, давление, оптика\n\n"
+            "🧪 <b>Химия</b>\n"
+            "• Молярная масса, количество вещества\n"
+            "• Объём газов, массовая доля\n"
+            "• Балансировка реакций, pH растворов\n\n"
+            "📸 <b>Распознавание фото</b>\n"
+            "• Отправь фото с задачей — я прочитаю и решу\n\n"
+            "📚 <b>История решений</b>\n"
+            "• Команда /history — показывает последние 10 решений\n\n"
+            "💰 <b>Подписка</b>\n"
+            "• 2 дня бесплатно, затем — 5 BYN (200 ₽) в месяц\n"
+            "• Безлимит на 100 запросов в день\n\n"
+            "📌 <b>Как начать?</b>\n"
+            "• Напиши задачу текстом\n"
+            "• Отправь фото с задачей\n"
+            "• Или нажми «график x²» для построения\n\n"
+            "🔥 Бот создан для школьников, студентов и всех, кто хочет быстро решать задачи!",
+            parse_mode=ParseMode.HTML
+        )
+    elif query.data == "physics":
+        await query.edit_message_text("⚛️ Физика:\n\nНапиши задачу по физике.")
+    elif query.data == "chemistry":
+        await query.edit_message_text("🧪 Химия:\n\nНапиши задачу по химии.")
     elif query.data == "graph":
         await query.edit_message_text("📊 Напиши 'график x**2'")
     elif query.data == "history":
         await query.edit_message_text("📚 /history")
     elif query.data == "clear_history":
         await query.edit_message_text("🗑️ /clear_history")
-    elif query.data == "physics":
-        await query.edit_message_text(
-        "⚛️ Физика:\n\n"
-        "Напиши задачу по физике, например:\n"
-        "• 'С какой силой притягиваются два тела массами 10 и 20 кг на расстоянии 2 м?'\n"
-        "• 'Найди импульс тела массой 5 кг со скоростью 10 м/с'\n"
-        "• 'Чему равна кинетическая энергия тела массой 2 кг при скорости 3 м/с?'"
-    )
 
-    elif query.data == "chemistry":
-        await query.edit_message_text(
-        "🧪 Химия:\n\n"
-        "Напиши задачу по химии, например:\n"
-        "• 'Уравняй реакцию: H2 + O2 = H2O'\n"
-        "• 'Найди молярную массу NaOH'\n"
-        "• 'Рассчитай pH раствора HCl 0.1M'"
-    )
-
-def main_keyboard():
-    keyboard = [
-        [InlineKeyboardButton("📝 Решить задачу", callback_data="solve")],
-        [InlineKeyboardButton("💳 Оплатить подписку", callback_data="pay")],
-        [InlineKeyboardButton("❓ Помощь", callback_data="help")],
-        [InlineKeyboardButton("⚛️ Физика", callback_data="physics")],
-        [InlineKeyboardButton("🧪 Химия", callback_data="chemistry")],
-        [InlineKeyboardButton("📊 График", callback_data="graph")],
-        [InlineKeyboardButton("📚 История", callback_data="history")],
-        [InlineKeyboardButton("🗑️ Очистить историю", callback_data="clear_history")],
-    ]
-    return InlineKeyboardMarkup(keyboard)
 def main():
     print("🚀 Бот запускается с защитой!")
     asyncio.run(init_db())
