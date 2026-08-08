@@ -247,21 +247,35 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await query.edit_message_text("📚 /history")
     elif query.data == "clear_history":
         await query.edit_message_text("🗑️ /clear_history")
+        elif query.data == "physics":
+    await query.edit_message_text(
+        "⚛️ Физика:\n\n"
+        "Напиши задачу по физике, например:\n"
+        "• 'С какой силой притягиваются два тела массами 10 и 20 кг на расстоянии 2 м?'\n"
+        "• 'Найди импульс тела массой 5 кг со скоростью 10 м/с'\n"
+        "• 'Чему равна кинетическая энергия тела массой 2 кг при скорости 3 м/с?'"
+    )
 
-def main():
-    print("🚀 Бот запускается с защитой!")
-    asyncio.run(init_db())
-    asyncio.run(clean_old_records())
-    app = Application.builder().token(BOT_TOKEN).build()
-    app.add_handler(CommandHandler("start", start))
-    app.add_handler(CommandHandler("pay", pay))
-    app.add_handler(CommandHandler("history", history))
-    app.add_handler(CommandHandler("clear_history", clear_history_cmd))
-    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
-    app.add_handler(MessageHandler(filters.PHOTO, handle_photo))
-    app.add_handler(CallbackQueryHandler(button_callback))
-    print("👁️ Бот запущен! Защита активна.")
-    app.run_polling()
+elif query.data == "chemistry":
+    await query.edit_message_text(
+        "🧪 Химия:\n\n"
+        "Напиши задачу по химии, например:\n"
+        "• 'Уравняй реакцию: H2 + O2 = H2O'\n"
+        "• 'Найди молярную массу NaOH'\n"
+        "• 'Рассчитай pH раствора HCl 0.1M'"
+    )
 
+def main_keyboard():
+    keyboard = [
+        [InlineKeyboardButton("📝 Решить задачу", callback_data="solve")],
+        [InlineKeyboardButton("💳 Оплатить подписку", callback_data="pay")],
+        [InlineKeyboardButton("❓ Помощь", callback_data="help")],
+        [InlineKeyboardButton("⚛️ Физика", callback_data="physics")],
+        [InlineKeyboardButton("🧪 Химия", callback_data="chemistry")],
+        [InlineKeyboardButton("📊 График", callback_data="graph")],
+        [InlineKeyboardButton("📚 История", callback_data="history")],
+        [InlineKeyboardButton("🗑️ Очистить историю", callback_data="clear_history")],
+    ]
+    return InlineKeyboardMarkup(keyboard)
 if __name__ == "__main__":
     main()
