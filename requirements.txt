@@ -4,4 +4,3 @@ python-dotenv
 aiosqlite
 matplotlib
 numpy
-openai-whisper
